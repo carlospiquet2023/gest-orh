@@ -117,6 +117,28 @@
                 page-break-inside: avoid; 
             }
             .signature-line { border-top: 1px solid #000; width: 250px; text-align: center; font-size: 10px; font-weight: bold; margin-top: 20px; }
+
+            /* Estilo do Relatório de Justificativas na Impressão */
+            #print-justifications {
+                margin-top: 40px;
+                page-break-inside: auto;
+                display: block !important;
+            }
+            #print-justifications table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 10px;
+            }
+            #print-justifications th, #print-justifications td {
+                border: 1px solid #000 !important;
+                padding: 6px !important;
+                text-align: left !important;
+                font-size: 10px !important;
+            }
+            #print-justifications th {
+                background-color: #e2e8f0 !important;
+                font-weight: bold;
+            }
         }
         
         .print-only { display: none; }
@@ -331,6 +353,21 @@
                         <div class="signature-line">Gestor Responsável</div>
                         <div class="signature-line">Recursos Humanos</div>
                     </div>
+                </div>
+
+                <!-- NOVO: Relatório de Justificativas (Impressão) -->
+                <div id="print-justifications" class="print-only mt-8 hidden">
+                    <h2 class="text-xl font-bold mb-4 border-b-2 border-slate-800 pb-2">Relatório de Justificativas</h2>
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-100">
+                                <th class="border p-2 font-bold text-slate-700">Data</th>
+                                <th class="border p-2 font-bold text-slate-700">Colaborador</th>
+                                <th class="border p-2 font-bold text-slate-700">Justificativa</th>
+                            </tr>
+                        </thead>
+                        <tbody id="print-justifications-body"></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -1007,6 +1044,54 @@
         function renderVacationList() { const list = document.getElementById('vacation-list'); list.innerHTML = ''; Object.keys(vacations).forEach(id => { const emp = employees.find(e => e.id == id); if(!emp) return; vacations[id].forEach((v, i) => { list.innerHTML += `<div class="p-4 bg-white border border-slate-100 rounded-2xl mb-2 flex justify-between items-center text-xs shadow-sm"><div><span class="font-bold text-slate-700 block mb-1">${emp.name}</span><span class="text-slate-400">${v.start.split('-').reverse().join('/')} até ${v.end.split('-').reverse().join('/')}</span></div><button onclick="vacations[${id}].splice(${i},1); saveData(); renderVacationList();" class="text-rose-400 bg-rose-50 p-1.5 rounded-lg hover:bg-rose-100"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`; }); }); lucide.createIcons(); }
         function addHoliday() { const d = document.getElementById('holiday-date').value; const t = document.getElementById('holiday-type').value; if(!d) return; holidays[d] = t; saveData(); renderHolidayList(); }
         function renderHolidayList() { const list = document.getElementById('holiday-list'); list.innerHTML = ''; Object.keys(holidays).sort().forEach(d => { list.innerHTML += `<div class="p-4 bg-white border border-slate-100 rounded-2xl mb-2 flex justify-between items-center text-xs shadow-sm"><div><span class="font-bold text-slate-700 block mb-1">${d.split('-').reverse().join('/')}</span><span class="text-slate-400 uppercase font-bold text-[10px]">${holidays[d]}</span></div><button onclick="delete holidays['${d}']; saveData(); renderHolidayList();" class="text-rose-400 bg-rose-50 p-1.5 rounded-lg hover:bg-rose-100"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`; }); lucide.createIcons(); }
+
+        // === RELATÓRIO DE JUSTIFICATIVAS PARA IMPRESSÃO ===
+        function renderJustificationsForPrint() {
+            const container = document.getElementById('print-justifications');
+            const tbody = document.getElementById('print-justifications-body');
+            tbody.innerHTML = '';
+            
+            let hasJustifications = false;
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // Ordena colaboradores por nome
+            const sortedEmployees = [...employees].sort((a,b) => a.name.localeCompare(b.name));
+
+            // Itera dia por dia do mês atual
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateKey = `${year}-${month}-${d}`;
+                
+                sortedEmployees.forEach(emp => {
+                    const key = `${dateKey}-${emp.id}`;
+                    const record = attendance[key];
+                    
+                    if (record && record.status === 'J') {
+                        hasJustifications = true;
+                        const dateStr = `${d.toString().padStart(2,'0')}/${(month+1).toString().padStart(2,'0')}/${year}`;
+                        
+                        const row = `
+                            <tr class="border-b border-slate-200">
+                                <td class="p-2 text-xs">${dateStr}</td>
+                                <td class="p-2 text-xs font-bold">${emp.name}</td>
+                                <td class="p-2 text-xs italic text-slate-600">${record.obs || 'Sem observação'}</td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += row;
+                    }
+                });
+            }
+
+            if (hasJustifications) {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        // Gancho para o evento de impressão
+        window.addEventListener('beforeprint', renderJustificationsForPrint);
 
         document.addEventListener('DOMContentLoaded', () => { loadData(); updateMonthDisplay(); renderUI(); initTooltips(); });
     </script>
