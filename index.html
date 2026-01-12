@@ -26,7 +26,7 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Tooltip Refinado (Substituto da "Tarja Preta") */
+        /* Tooltip Refinado */
         #custom-tooltip {
             position: fixed;
             background-color: rgba(15, 23, 42, 0.9);
@@ -55,11 +55,10 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
 
-        /* --- CSS DE IMPRESSÃO OTIMIZADO (CORREÇÃO DE REPETIÇÃO) --- */
+        /* --- CSS DE IMPRESSÃO --- */
         @media print {
             @page { size: landscape; margin: 4mm; }
             
-            /* Reset Total para Impressão */
             html, body, #matrix-wrapper, #matrix-container, main, .flex { 
                 display: block !important; 
                 width: 100% !important;
@@ -73,42 +72,50 @@
             
             body { zoom: 65%; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             
-            /* Ocultar elementos de UI */
             .no-print, nav, aside, #quick-stats, #loading-overlay, .fixed, button, #toast-container, #custom-tooltip { display: none !important; }
-            .print-only { display: block !important; }
             
-            /* Correção Crítica do Cabeçalho Repetido */
-            /* Removemos sticky e garantimos que o thead padrão do navegador assuma, mas sem duplicatas de JS */
+            /* CORREÇÃO AQUI: Só exibe se NÃO tiver a classe hidden */
+            .print-only { display: block !important; }
+            .print-only.hidden { display: none !important; }
+            .hidden { display: none !important; }
+            
             .sticky-col, .sticky-header, .sticky-corner { 
                 position: static !important; 
                 border: 1px solid #e2e8f0 !important;
                 box-shadow: none !important;
             }
             
-            #print-table-clone { display: none !important; } /* Garante que clones manuais sumam */
+            #print-table-clone { display: none !important; }
 
             table { 
                 width: 100% !important; 
                 border-collapse: collapse !important; 
                 font-size: 10px !important; 
                 page-break-inside: auto;
-                table-layout: auto !important; /* Importante para evitar quebras estranhas */
+                table-layout: auto !important;
             }
             
-            thead { 
-                display: table-header-group !important; /* Padrão correto para repetir 1x por página */
-                break-inside: avoid;
-            }
-            
+            thead { display: table-header-group !important; break-inside: avoid; }
             tr { page-break-inside: avoid; page-break-after: auto; }
             td, th { border: 1px solid #94a3b8 !important; padding: 4px !important; }
             
-            /* Estilo Limpo de Impressão */
             th { background-color: #f1f5f9 !important; color: #0f172a !important; font-weight: 800 !important; }
             .bg-ho { background-color: #f3f4f6 !important; color: #64748b !important; } 
             .bg-office { background-color: #fff !important; color: #000 !important; font-weight: 900; }
             
-            /* Footer de Assinatura */
+            /* Nome do Professor no Cabeçalho (Impressão) */
+            .print-prof-name {
+                display: block !important;
+                font-size: 8px !important;
+                color: #0f172a !important;
+                font-weight: 900 !important;
+                margin-top: 2px;
+                text-transform: uppercase;
+                line-height: 1.1;
+                width: 100%;
+                text-align: center;
+            }
+
             #print-footer { 
                 display: flex !important; 
                 justify-content: space-between; 
@@ -118,30 +125,33 @@
             }
             .signature-line { border-top: 1px solid #000; width: 250px; text-align: center; font-size: 10px; font-weight: bold; margin-top: 20px; }
 
-            /* Estilo do Relatório de Justificativas na Impressão */
-            #print-justifications {
-                margin-top: 40px;
+            /* Tabelas de Relatório na Impressão */
+            #print-justifications, #print-day-details {
+                margin-top: 30px;
                 page-break-inside: auto;
-                display: block !important;
             }
-            #print-justifications table {
+            
+            #print-justifications table, #print-day-details table {
                 width: 100%;
                 border-collapse: collapse;
-                margin-top: 10px;
+                margin-top: 5px;
             }
-            #print-justifications th, #print-justifications td {
+            #print-justifications th, #print-justifications td,
+            #print-day-details th, #print-day-details td {
                 border: 1px solid #000 !important;
-                padding: 6px !important;
+                padding: 4px !important;
                 text-align: left !important;
                 font-size: 10px !important;
             }
-            #print-justifications th {
+            #print-justifications th, #print-day-details th {
                 background-color: #e2e8f0 !important;
                 font-weight: bold;
             }
         }
         
         .print-only { display: none; }
+        .print-prof-name { display: none; } /* Esconde na tela normal */
+        
         .sticky-col { position: sticky; left: 0; background: white; z-index: 10; border-right: 1px solid #e2e8f0; }
         .sticky-header { position: sticky; top: 0; z-index: 20; background: #f8fafc; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .sticky-corner { position: sticky; top: 0; left: 0; z-index: 30; background: #f8fafc; border-right: 1px solid #e2e8f0; }
@@ -150,7 +160,7 @@
         .draggable-source { cursor: grab; }
         .draggable-source:active { cursor: grabbing; }
 
-        /* Cores de Status Refinadas */
+        /* Cores de Status */
         .status-P { background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; } 
         .status-F { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; } 
         .status-J { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; } 
@@ -176,13 +186,50 @@
         </div>
     </div>
 
+    <!-- Modal: Detalhes do Dia (Professor) -->
+    <div id="day-details-modal" class="fixed inset-0 bg-slate-900/60 z-[130] hidden flex items-center justify-center backdrop-blur-sm no-print">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md mx-4 overflow-hidden animate-fade-in border border-slate-100">
+            <div class="p-6 border-b flex justify-between items-center bg-indigo-50/50">
+                <div>
+                    <h3 class="font-bold text-indigo-950 text-lg">Detalhes do Dia</h3>
+                    <p class="text-xs text-indigo-500 font-bold uppercase tracking-wider mt-0.5" id="day-details-subtitle"></p>
+                </div>
+                <button onclick="closeModal('day-details-modal')" class="text-indigo-300 hover:text-indigo-600 transition-colors bg-white rounded-full p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase ml-1">Nome do professor(a)</label>
+                    <input type="text" id="day-professor" placeholder="Nome do Professor" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase ml-1">Matéria</label>
+                    <input type="text" id="day-subject" placeholder="Ex: Matemática" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-bold text-slate-400 uppercase ml-1">Entrada</label>
+                        <input type="time" id="day-start" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-center">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-400 uppercase ml-1">Saída</label>
+                        <input type="time" id="day-end" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-center">
+                    </div>
+                </div>
+            </div>
+            <div class="p-5 bg-slate-50 border-t flex justify-end gap-3">
+                <button onclick="closeModal('day-details-modal')" class="px-5 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors">Cancelar</button>
+                <button onclick="saveDayDetails()" class="px-8 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transform active:scale-95 transition-all">SALVAR</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: Seleção de Datas -->
     <div id="date-selection-modal" class="fixed inset-0 bg-slate-900/50 z-[100] hidden flex items-center justify-center backdrop-blur-sm no-print">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl mx-4 flex flex-col max-h-[85vh] overflow-hidden animate-fade-in border border-slate-200">
             <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0">
                 <div>
                     <h3 class="font-bold text-slate-800 flex items-center gap-2 text-lg"><div class="p-2 bg-indigo-50 rounded-lg text-indigo-600"><i data-lucide="calendar-check" class="w-5 h-5"></i></div> Datas da Escala</h3>
-                    <p class="text-sm text-slate-500 mt-1">Selecione os dias úteis para gerar a escala automática.</p>
+                    <p class="text-sm text-slate-500 mt-1">Selecione os dias úteis e adicione detalhes.</p>
                 </div>
                 <button onclick="closeModal('date-selection-modal')" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-full transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
@@ -369,6 +416,23 @@
                         <tbody id="print-justifications-body"></tbody>
                     </table>
                 </div>
+
+                <!-- NOVO: Relatório de Detalhes do Dia (Impressão) -->
+                <div id="print-day-details" class="print-only mt-8 hidden">
+                    <h2 class="text-xl font-bold mb-4 border-b-2 border-slate-800 pb-2">Detalhamento Diário (Professores)</h2>
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-100">
+                                <th class="border p-2 font-bold text-slate-700">Dia da Aula</th>
+                                <th class="border p-2 font-bold text-slate-700">Nome do Professor</th>
+                                <th class="border p-2 font-bold text-slate-700">Matéria</th>
+                                <th class="border p-2 font-bold text-slate-700">Entrada</th>
+                                <th class="border p-2 font-bold text-slate-700">Saída</th>
+                            </tr>
+                        </thead>
+                        <tbody id="print-day-details-body"></tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- Botões Flutuantes -->
@@ -379,56 +443,33 @@
                 <button onclick="window.print()" class="bg-slate-900 text-white p-4 rounded-2xl shadow-xl shadow-slate-300 hover:bg-slate-800 hover:scale-105 hover:-translate-y-1 transition-all group" data-tooltip="Imprimir">
                     <i data-lucide="printer" class="w-6 h-6 group-hover:scale-110 transition-transform"></i>
                 </button>
-                <!-- Botão Python removido conforme solicitado -->
             </div>
         </main>
     </div>
 
-    <!-- MODAL: REGISTRO DE PRESENÇA -->
-    <div id="attendance-modal" class="fixed inset-0 bg-slate-900/60 z-[120] hidden flex items-center justify-center backdrop-blur-sm no-print">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md mx-4 overflow-hidden animate-fade-in border border-slate-100">
-            <div class="p-6 border-b flex justify-between items-center bg-indigo-50/50">
-                <div>
-                    <h3 class="font-bold text-indigo-950 text-lg" id="att-modal-title">Detalhes</h3>
-                    <p class="text-xs text-indigo-500 font-bold uppercase tracking-wider mt-0.5" id="att-modal-subtitle"></p>
-                </div>
-                <button onclick="closeModal('attendance-modal')" class="text-indigo-300 hover:text-indigo-600 transition-colors bg-white rounded-full p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <!-- Modal Contexto -->
+    <div id="context-modal" class="fixed inset-0 bg-slate-900/60 z-[100] hidden flex items-center justify-center backdrop-blur-sm no-print">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl mx-4 flex flex-col animate-fade-in border border-slate-100">
+            <div class="p-6 border-b flex justify-between items-center">
+                <div><h3 class="font-bold text-slate-800 text-lg">Configurar Local</h3><p class="text-xs text-slate-500">Defina os parâmetros do cabeçalho da escala.</p></div>
+                <button onclick="closeModal('context-modal')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
-            <div class="p-6 space-y-5">
-                <div class="space-y-3">
-                    <label class="text-xs font-bold text-slate-400 uppercase ml-1">Informações</label>
-                    <input type="text" id="att-subject" placeholder="Atividade / Matéria" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
-                    <div class="grid grid-cols-2 gap-3">
-                        <input type="time" id="att-time-start" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-center">
-                        <input type="time" id="att-time-end" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-center">
-                    </div>
-                </div>
-
-                <div class="space-y-3">
-                    <label class="text-xs font-bold text-slate-400 uppercase ml-1">Status</label>
-                    <div class="grid grid-cols-2 gap-3" id="att-status-group">
-                        <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-emerald-50 transition-all has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50 has-[:checked]:shadow-sm">
-                            <input type="radio" name="att-status" value="P" class="w-4 h-4 text-emerald-600 accent-emerald-600"><span class="text-sm font-bold text-slate-700">Presença</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-rose-50 transition-all has-[:checked]:border-rose-500 has-[:checked]:bg-rose-50 has-[:checked]:shadow-sm">
-                            <input type="radio" name="att-status" value="F" class="w-4 h-4 text-rose-600 accent-rose-600"><span class="text-sm font-bold text-slate-700">Falta</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-blue-50 transition-all has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 has-[:checked]:shadow-sm col-span-2">
-                            <input type="radio" name="att-status" value="J" class="w-4 h-4 text-blue-600 accent-blue-600" onchange="toggleJustification(true)"><span class="text-sm font-bold text-slate-700">Falta Justificada</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div id="justification-fields" class="hidden animate-fade-in">
-                    <textarea id="att-obs" placeholder="Motivo da justificativa..." class="w-full p-3 border border-slate-200 bg-slate-50 rounded-xl text-sm h-24 focus:ring-2 focus:ring-blue-500 outline-none resize-none"></textarea>
+            <div class="p-8 space-y-6">
+                <div class="space-y-4">
+                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Nome do Local / Empresa</label><input type="text" id="ctx-local" class="w-full p-3.5 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 focus:bg-white transition-all"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Unidade / Departamento</label><input type="text" id="ctx-unidade" class="w-full p-3.5 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 focus:bg-white transition-all"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Sala / Setor (Opcional)</label><input type="text" id="ctx-sala" class="w-full p-3.5 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 focus:bg-white transition-all"></div>
                 </div>
             </div>
-            <div class="p-5 bg-slate-50 border-t flex justify-end gap-3">
-                <button onclick="closeModal('attendance-modal')" class="px-5 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors">Cancelar</button>
-                <button onclick="saveAttendance()" class="px-8 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transform active:scale-95 transition-all">SALVAR</button>
+            <div class="p-6 bg-slate-50 border-t rounded-b-3xl flex justify-end">
+                <button onclick="saveContext()" class="bg-indigo-600 text-white px-8 py-3 rounded-xl text-sm font-bold shadow-lg hover:bg-indigo-700 hover:-translate-y-0.5 transition-all">SALVAR ALTERAÇÕES</button>
             </div>
         </div>
     </div>
+
+    <!-- Modais Auxiliares (Férias/Feriados) -->
+    <div id="vacation-modal" class="fixed inset-0 bg-slate-900/60 z-[100] hidden flex items-center justify-center backdrop-blur-sm no-print"><div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 flex flex-col max-h-[85vh] overflow-hidden"><div class="p-6 border-b flex justify-between items-center bg-amber-50/50"><h3 class="text-lg font-bold text-amber-900 flex items-center gap-2"><i data-lucide="plane" class="w-5 h-5 text-amber-600"></i> Registrar Férias</h3><button onclick="closeModal('vacation-modal')" class="text-amber-400 hover:text-amber-700"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="p-6 border-b space-y-4 bg-white"><div><label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Colaborador</label><select id="vacation-emp-select" class="w-full p-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none bg-slate-50"></select></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Início</label><input type="date" id="vacation-start" class="w-full p-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 bg-slate-50"></div><div><label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Fim</label><input type="date" id="vacation-end" class="w-full p-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 bg-slate-50"></div></div><button onclick="addVacation()" class="w-full py-3 bg-amber-500 text-white rounded-xl font-bold text-sm shadow-lg shadow-amber-100 flex justify-center gap-2 hover:bg-amber-600 transition-all">ADICIONAR PERÍODO</button></div><div class="flex-1 overflow-y-auto p-4 custom-scrollbar bg-slate-50" id="vacation-list"></div></div></div>
+    <div id="holiday-modal" class="fixed inset-0 bg-slate-900/60 z-[100] hidden flex items-center justify-center backdrop-blur-sm no-print"><div class="bg-white rounded-3xl shadow-2xl w-full max-w-md mx-4 flex flex-col max-h-[85vh] overflow-hidden"><div class="p-6 border-b flex justify-between items-center bg-rose-50/50"><h3 class="text-lg font-bold text-rose-900 flex items-center gap-2"><i data-lucide="calendar-off" class="w-5 h-5 text-rose-600"></i> Feriados</h3><button onclick="closeModal('holiday-modal')" class="text-rose-400 hover:text-rose-700"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="p-6 border-b space-y-4 bg-white"><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-bold text-slate-400 uppercase mb-1">Data</label><input type="date" id="holiday-date" class="w-full p-3 border border-slate-200 rounded-xl text-sm bg-slate-50"></div><div><label class="block text-xs font-bold text-slate-400 uppercase mb-1">Tipo</label><select id="holiday-type" class="w-full p-3 border border-slate-200 rounded-xl text-sm bg-slate-50"><option value="FERIADO">Feriado</option><option value="FACULTATIVO">Facultativo</option></select></div></div><button onclick="addHoliday()" class="w-full py-3 bg-rose-500 text-white rounded-xl font-bold text-sm shadow-lg shadow-rose-100 flex justify-center gap-2 hover:bg-rose-600 transition-all">ADICIONAR DATA</button></div><div class="flex-1 overflow-y-auto p-4 custom-scrollbar bg-slate-50" id="holiday-list"></div></div></div>
 
     <!-- Modal Relatórios -->
     <div id="reports-modal" class="fixed inset-0 bg-slate-900/60 z-[120] hidden flex items-center justify-center backdrop-blur-sm no-print">
@@ -464,30 +505,6 @@
         </div>
     </div>
 
-    <!-- Modal Contexto -->
-    <div id="context-modal" class="fixed inset-0 bg-slate-900/60 z-[100] hidden flex items-center justify-center backdrop-blur-sm no-print">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl mx-4 flex flex-col animate-fade-in border border-slate-100">
-            <div class="p-6 border-b flex justify-between items-center">
-                <div><h3 class="font-bold text-slate-800 text-lg">Configurar Local</h3><p class="text-xs text-slate-500">Defina os parâmetros do cabeçalho da escala.</p></div>
-                <button onclick="closeModal('context-modal')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
-            </div>
-            <div class="p-8 space-y-6">
-                <div class="space-y-4">
-                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Nome do Local / Empresa</label><input type="text" id="ctx-local" class="w-full p-3.5 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 focus:bg-white transition-all"></div>
-                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Unidade / Departamento</label><input type="text" id="ctx-unidade" class="w-full p-3.5 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 focus:bg-white transition-all"></div>
-                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Sala / Setor (Opcional)</label><input type="text" id="ctx-sala" class="w-full p-3.5 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 focus:bg-white transition-all"></div>
-                </div>
-            </div>
-            <div class="p-6 bg-slate-50 border-t rounded-b-3xl flex justify-end">
-                <button onclick="saveContext()" class="bg-indigo-600 text-white px-8 py-3 rounded-xl text-sm font-bold shadow-lg hover:bg-indigo-700 hover:-translate-y-0.5 transition-all">SALVAR ALTERAÇÕES</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modais Auxiliares (Férias/Feriados) -->
-    <div id="vacation-modal" class="fixed inset-0 bg-slate-900/60 z-[100] hidden flex items-center justify-center backdrop-blur-sm no-print"><div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 flex flex-col max-h-[85vh] overflow-hidden"><div class="p-6 border-b flex justify-between items-center bg-amber-50/50"><h3 class="text-lg font-bold text-amber-900 flex items-center gap-2"><i data-lucide="plane" class="w-5 h-5 text-amber-600"></i> Registrar Férias</h3><button onclick="closeModal('vacation-modal')" class="text-amber-400 hover:text-amber-700"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="p-6 border-b space-y-4 bg-white"><div><label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Colaborador</label><select id="vacation-emp-select" class="w-full p-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none bg-slate-50"></select></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Início</label><input type="date" id="vacation-start" class="w-full p-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 bg-slate-50"></div><div><label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Fim</label><input type="date" id="vacation-end" class="w-full p-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 bg-slate-50"></div></div><button onclick="addVacation()" class="w-full py-3 bg-amber-500 text-white rounded-xl font-bold text-sm shadow-lg shadow-amber-100 flex justify-center gap-2 hover:bg-amber-600 transition-all">ADICIONAR PERÍODO</button></div><div class="flex-1 overflow-y-auto p-4 custom-scrollbar bg-slate-50" id="vacation-list"></div></div></div>
-    <div id="holiday-modal" class="fixed inset-0 bg-slate-900/60 z-[100] hidden flex items-center justify-center backdrop-blur-sm no-print"><div class="bg-white rounded-3xl shadow-2xl w-full max-w-md mx-4 flex flex-col max-h-[85vh] overflow-hidden"><div class="p-6 border-b flex justify-between items-center bg-rose-50/50"><h3 class="text-lg font-bold text-rose-900 flex items-center gap-2"><i data-lucide="calendar-off" class="w-5 h-5 text-rose-600"></i> Feriados</h3><button onclick="closeModal('holiday-modal')" class="text-rose-400 hover:text-rose-700"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="p-6 border-b space-y-4 bg-white"><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-bold text-slate-400 uppercase mb-1">Data</label><input type="date" id="holiday-date" class="w-full p-3 border border-slate-200 rounded-xl text-sm bg-slate-50"></div><div><label class="block text-xs font-bold text-slate-400 uppercase mb-1">Tipo</label><select id="holiday-type" class="w-full p-3 border border-slate-200 rounded-xl text-sm bg-slate-50"><option value="FERIADO">Feriado</option><option value="FACULTATIVO">Facultativo</option></select></div></div><button onclick="addHoliday()" class="w-full py-3 bg-rose-500 text-white rounded-xl font-bold text-sm shadow-lg shadow-rose-100 flex justify-center gap-2 hover:bg-rose-600 transition-all">ADICIONAR DATA</button></div><div class="flex-1 overflow-y-auto p-4 custom-scrollbar bg-slate-50" id="holiday-list"></div></div></div>
-
     <script>
         // === ESTADO GLOBAL ===
         let currentDate = new Date();
@@ -504,6 +521,7 @@
         let dayMetadata = {}; 
         let currentAttKey = null;
         let attendanceChart = null; 
+        let currentDayDetailKey = null;
 
         const hoPairs = [[0, 2], [1, 3], [2, 4], [3, 0], [4, 1], [0, 3], [1, 4]];
 
@@ -559,18 +577,14 @@
             const x = e.clientX;
             const y = e.clientY;
             const offset = 15;
-            
-            // Lógica para não sair da tela
             let left = x + offset;
             let top = y + offset;
-            
             if (left + tooltip.offsetWidth > window.innerWidth) {
                 left = x - tooltip.offsetWidth - offset;
             }
             if (top + tooltip.offsetHeight > window.innerHeight) {
                 top = y - tooltip.offsetHeight - offset;
             }
-
             tooltip.style.left = left + 'px';
             tooltip.style.top = top + 'px';
         }
@@ -629,10 +643,18 @@
 
         function updateMonthDisplay() {
             const txt = currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-            document.getElementById('current-month-display').textContent = txt;
-            document.getElementById('print-month-title').textContent = txt;
-            document.getElementById('rep-month-label').textContent = txt;
-            document.getElementById('print-date-generated').textContent = new Date().toLocaleString('pt-BR');
+            
+            const elCurrent = document.getElementById('current-month-display');
+            if (elCurrent) elCurrent.textContent = txt;
+            
+            const elPrint = document.getElementById('print-month-title');
+            if (elPrint) elPrint.textContent = txt;
+            
+            const elRep = document.getElementById('rep-month-label');
+            if (elRep) elRep.textContent = txt;
+            
+            const elGen = document.getElementById('print-date-generated');
+            if (elGen) elGen.textContent = new Date().toLocaleString('pt-BR');
         }
 
         function changeMonth(offset) {
@@ -679,13 +701,18 @@
                 const checked = selectedDays.includes(d) ? 'checked' : (isWE ? '' : 'checked');
                 
                 list.innerHTML += `
-                    <label class="flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl cursor-pointer hover:border-indigo-200 transition-colors shadow-sm">
-                        <input type="checkbox" name="sel-day" value="${d}" ${checked} class="w-5 h-5 rounded-md text-indigo-600 focus:ring-indigo-500 border-slate-300">
-                        <div class="flex flex-col">
-                            <span class="text-sm font-bold text-slate-700">Dia ${d.toString().padStart(2, '0')} <span class="text-slate-400 font-normal">• ${daysNames[dw]}</span></span>
-                            ${holidays[iso] ? `<span class="text-[10px] text-rose-500 font-bold uppercase mt-0.5">${holidays[iso]}</span>` : ''}
-                        </div>
-                    </label>
+                    <div class="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-2xl hover:border-indigo-200 transition-colors shadow-sm">
+                        <label class="flex items-center gap-4 cursor-pointer flex-1">
+                            <input type="checkbox" name="sel-day" value="${d}" ${checked} class="w-5 h-5 rounded-md text-indigo-600 focus:ring-indigo-500 border-slate-300">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-slate-700">Dia ${d.toString().padStart(2, '0')} <span class="text-slate-400 font-normal">• ${daysNames[dw]}</span></span>
+                                ${holidays[iso] ? `<span class="text-[10px] text-rose-500 font-bold uppercase mt-0.5">${holidays[iso]}</span>` : ''}
+                            </div>
+                        </label>
+                        <button onclick="openDayDetails('${iso}', '${d}/${month+1}')" class="px-3 py-1.5 text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors ml-2">
+                            Detalhes
+                        </button>
+                    </div>
                 `;
             }
             openModal('date-selection-modal');
@@ -808,15 +835,19 @@
                 const iso = date.toISOString().split('T')[0];
                 const isActive = selectedDays.includes(d);
                 const hol = holidays[iso];
+                const details = dayMetadata[iso] || {};
                 
                 let bg = isActive ? (dw === 0 || dw === 6 ? 'bg-slate-50' : 'bg-white') : 'bg-slate-100 opacity-40';
                 let txt = isActive ? 'text-slate-600' : 'text-slate-400';
                 if(hol) { bg = 'bg-rose-50'; txt = 'text-rose-600'; }
 
                 headerRow += `<th class="sticky-header border-b border-r border-slate-100 text-center min-w-[36px] ${bg} ${txt}">
-                    <div class="flex flex-col items-center justify-center h-full">
+                    <div class="flex flex-col items-center justify-center h-full relative group/th">
                         <span class="text-[9px] opacity-70 font-semibold">${letter}</span>
-                        <span class="text-sm font-bold">${d}</span>
+                        <div class="flex items-center gap-0.5">
+                            <span class="text-sm font-bold">${d}</span>
+                        </div>
+                        ${details.professor ? `<span class="print-prof-name">${details.professor.split(' ')[0]}</span>` : ''}
                     </div>
                 </th>`;
             }
@@ -848,8 +879,14 @@
                         cellClass += "bg-amber-100 text-amber-700 font-bold";
                         content = `<i data-lucide="plane" class="w-3.5 h-3.5 mx-auto"></i>`;
                     } else if (hol) {
-                        cellClass += "bg-rose-50 text-rose-500 font-black";
-                        content = "F";
+                        if (hol === 'FERIADO') {
+                            cellClass += "bg-purple-100 text-purple-700 font-black"; // COR ROXA PARA FE
+                            content = "FE";
+                        } else {
+                            // FACULTATIVO
+                            cellClass += "bg-pink-100 text-pink-700 font-black"; // COR ROSA PARA FA
+                            content = "FA";
+                        }
                     } else if (currentMode === 'schedule') {
                         if (isHO) {
                             cellClass += "bg-slate-50 text-slate-400 font-bold draggable-source hover:bg-indigo-50 hover:text-indigo-400";
@@ -876,6 +913,47 @@
                 body.innerHTML += rowHtml;
             });
             lucide.createIcons();
+        }
+
+        // === FUNÇÕES PARA DETALHES DO DIA ===
+        function openDayDetails(isoDate, displayDate) {
+            currentDayDetailKey = isoDate;
+            const details = dayMetadata[isoDate] || {};
+
+            document.getElementById('day-details-subtitle').innerText = displayDate;
+            document.getElementById('day-professor').value = details.professor || "";
+            document.getElementById('day-subject').value = details.subject || "";
+            document.getElementById('day-start').value = details.start || "";
+            document.getElementById('day-end').value = details.end || "";
+
+            openModal('day-details-modal');
+        }
+
+        function saveDayDetails() {
+            if (!currentDayDetailKey) return;
+            
+            const prof = document.getElementById('day-professor').value;
+            const subj = document.getElementById('day-subject').value;
+            const start = document.getElementById('day-start').value;
+            const end = document.getElementById('day-end').value;
+
+            if (!prof && !subj && !start && !end) {
+                delete dayMetadata[currentDayDetailKey];
+            } else {
+                dayMetadata[currentDayDetailKey] = {
+                    professor: prof,
+                    subject: subj,
+                    start: start,
+                    end: end
+                };
+            }
+            
+            saveData();
+            // Atualiza o display se estiver no modal de datas para refletir que tem dados (opcional, mas não mudamos o HTML do modal aqui)
+            // Re-renderiza a matriz para caso o usuário feche o modal de datas e olhe o cabeçalho (embora o cabeçalho seja atualizado no renderMatrix)
+            // Se estivermos dentro do modal de datas, não precisamos fechar ele, apenas o modal de detalhes
+            closeModal('day-details-modal');
+            showToast("Detalhes do dia salvos.");
         }
 
         function openAttendanceModal(key, id, name) {
@@ -1005,11 +1083,181 @@
         function downloadPortalFile() {
             const data = { employees, schedule, attendance, holidays, context, year: currentDate.getFullYear(), month: currentDate.getMonth(), monthName: currentDate.toLocaleDateString('pt-BR', {month:'long'}), selectedDays };
             
-            // --- PORTAL PREMIUM APP TEMPLATE ---
-            const portalHTML = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Portal do Colaborador</title><script src="https://cdn.tailwindcss.com"></`+`script><script src="https://unpkg.com/lucide@latest"></`+`script><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet"><style>body{font-family:'Plus Jakarta Sans',sans-serif;background:#f8fafc}.card{background:white;border-radius:16px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05),0 2px 4px -1px rgba(0,0,0,0.01)}.status-ho{background:#f1f5f9;color:#64748b;font-weight:700}.status-ep{background:#eff6ff;color:#4f46e5;font-weight:800}.status-badge{padding:4px 12px;border-radius:99px;font-size:11px;text-transform:uppercase;letter-spacing:0.05em}.animate-slide-up{animation:slideUp 0.4s ease-out forwards;opacity:0;transform:translateY(20px)}@keyframes slideUp{to{opacity:1;transform:translateY(0)}}</style></head><body class="min-h-screen p-4 md:p-8"><div class="max-w-md mx-auto"><div class="text-center mb-8"><div class="inline-flex items-center justify-center w-12 h-12 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-200 mb-4"><i data-lucide="layers" class="text-white w-6 h-6"></i></div><h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Portal do Colaborador</h1><p class="text-slate-500 font-medium text-sm mt-1 uppercase tracking-wider">\${DATA.monthName} \${DATA.year}</p></div><div class="card p-2 mb-6 shadow-xl shadow-slate-200/50"><div class="relative"><i data-lucide="search" class="absolute left-4 top-3.5 text-slate-400 w-5 h-5"></i><input type="text" id="n" placeholder="Digite seu nome..." class="w-full pl-12 pr-4 py-3 rounded-xl bg-slate-50 border-none outline-none focus:ring-2 focus:ring-indigo-500 font-semibold text-slate-700 transition-all placeholder:text-slate-400" onkeyup="if(event.key==='Enter')s()"></div><button onclick="s()" class="w-full mt-2 bg-slate-900 text-white font-bold py-3.5 rounded-xl hover:bg-indigo-600 transition-colors shadow-lg">CONSULTAR ESCALA</button></div><div id="r" class="space-y-4"></div></div><script>const DATA=${JSON.stringify(data)};function s(){const v=document.getElementById('n').value.toLowerCase().trim();if(v.length<3){alert('Digite pelo menos 3 letras');return}const e=DATA.employees.find(x=>x.name.toLowerCase().includes(v));const r=document.getElementById('r');r.innerHTML='';if(!e){r.innerHTML='<div class="text-center p-8 bg-white rounded-2xl border border-slate-100 shadow-sm"><div class="text-rose-500 font-bold mb-2">Não encontrado</div><p class="text-slate-400 text-sm">Verifique se digitou o nome corretamente.</p></div>';lucide.createIcons();return}let daysHTML='';let hoCount=0,epCount=0;DATA.selectedDays.forEach(d=>{const k=\`\${DATA.year}-\${DATA.month}-\${d}\`;const isH=DATA.schedule[k]&&DATA.schedule[k].includes(e.id);if(isH)hoCount++;else epCount++;const date=new Date(DATA.year,DATA.month,d);const dw=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][date.getDay()];daysHTML+=\`<div class="flex items-center justify-between p-4 bg-white border border-slate-100 rounded-2xl mb-3 shadow-sm hover:shadow-md transition-shadow animate-slide-up"><div class="flex items-center gap-4"><div class="flex flex-col items-center justify-center bg-slate-50 w-12 h-12 rounded-xl border border-slate-100"><span class="text-[10px] uppercase font-bold text-slate-400">\${dw}</span><span class="text-lg font-black text-slate-700">\${d}</span></div><div class="flex flex-col"><span class="text-sm font-bold text-slate-600">\${isH?'Home Office':'Presencial'}</span><span class="text-[10px] text-slate-400 font-medium">\${isH?'Trabalho remoto':'Escritório Central'}</span></div></div><span class="status-badge \${isH?'status-ho':'status-ep'}">\${isH?'HO':'EP'}</span></div>\`});const summary=\`<div class="bg-indigo-600 p-6 rounded-3xl shadow-xl shadow-indigo-200 mb-6 text-white animate-slide-up"><h2 class="text-xl font-bold mb-1">\${e.name}</h2><p class="text-indigo-200 text-xs font-bold uppercase tracking-widest mb-6">Resumo Mensal</p><div class="flex gap-4"><div class="bg-indigo-500/50 p-3 rounded-2xl flex-1 backdrop-blur-sm"><span class="block text-2xl font-black">\${epCount}</span><span class="text-[10px] uppercase font-bold text-indigo-200">Dias Presenciais</span></div><div class="bg-indigo-500/50 p-3 rounded-2xl flex-1 backdrop-blur-sm"><span class="block text-2xl font-black">\${hoCount}</span><span class="text-[10px] uppercase font-bold text-indigo-200">Dias Home Office</span></div></div></div>\`;r.innerHTML=summary+daysHTML;lucide.createIcons()}</`+`script></body></html>`;
+            const portalHTML = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal do Colaborador • Matrix Pro</title>
+    <script src="https://cdn.tailwindcss.com"><\/script>
+    <script src="https://unpkg.com/lucide@latest"><\/script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; background-image: radial-gradient(circle at 50% 0%, #e0e7ff 0%, transparent 70%); min-height: 100vh; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.1); }
+        .day-card { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); border-left: 4px solid transparent; }
+        .day-card:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05); }
+        .status-ep { border-left-color: #4f46e5; background: linear-gradient(to right, #eef2ff, #fff 15%); }
+        .status-ho { border-left-color: #64748b; background: linear-gradient(to right, #f8fafc, #fff 15%); }
+        .input-group:focus-within { transform: scale(1.02); box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.2); }
+        .animate-enter { animation: enter 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(20px); }
+        @keyframes enter { to { opacity: 1; transform: translateY(0); } }
+        /* Custom Scrollbar for the list */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="p-6 md:p-12 flex flex-col items-center">
+    
+    <div class="w-full max-w-lg relative z-10">
+        <!-- Header Section -->
+        <div class="text-center mb-10 space-y-2">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-600 text-white shadow-xl shadow-indigo-200 mb-4 rotate-3 hover:rotate-6 transition-transform">
+                <i data-lucide="calendar-check" class="w-8 h-8"></i>
+            </div>
+            <h1 class="text-3xl font-black text-slate-900 tracking-tight">Portal do Colaborador</h1>
+            <p class="text-indigo-600 font-bold text-sm uppercase tracking-widest bg-indigo-50 inline-block px-4 py-1 rounded-full border border-indigo-100">
+                ${data.monthName} ${data.year}
+            </p>
+        </div>
+
+        <!-- Search Card -->
+        <div class="glass-card rounded-3xl p-3 mb-8 input-group transition-all duration-300">
+            <div class="relative">
+                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                    <i data-lucide="search" class="w-5 h-5"></i>
+                </div>
+                <input type="text" id="searchInput" 
+                    placeholder="Digite seu nome completo..." 
+                    class="w-full pl-12 pr-4 py-4 bg-transparent text-slate-800 font-bold placeholder:text-slate-400 focus:outline-none text-base"
+                    onkeyup="if(event.key==='Enter') searchSchedule()">
+            </div>
+            <button onclick="searchSchedule()" class="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-indigo-200 active:scale-95 flex items-center justify-center gap-2">
+                <span>CONSULTAR ESCALA</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <!-- Results Area -->
+        <div id="resultsArea" class="space-y-6"></div>
+    </div>
+
+    <div class="fixed bottom-0 left-0 w-full h-64 bg-gradient-to-t from-white to-transparent pointer-events-none -z-10"></div>
+
+    <script>
+        const DATA = ${JSON.stringify(data)};
+        
+        function searchSchedule() {
+            const val = document.getElementById('searchInput').value.toLowerCase().trim();
+            const container = document.getElementById('resultsArea');
+            container.innerHTML = '';
+            
+            if (val.length < 3) {
+                showMsg('alert-circle', 'Digite pelo menos 3 letras para buscar.', 'text-amber-500');
+                return;
+            }
+
+            const emp = DATA.employees.find(e => e.name.toLowerCase().includes(val));
+            
+            if (!emp) {
+                showMsg('user-x', 'Colaborador não encontrado. Verifique o nome.', 'text-rose-500');
+                return;
+            }
+
+            // Calculate Stats
+            let hoCount = 0;
+            let epCount = 0;
+            const scheduleList = [];
+
+            DATA.selectedDays.forEach(d => {
+                const dateKey = \`\${DATA.year}-\${DATA.month}-\${d}\`;
+                const dateObj = new Date(DATA.year, DATA.month, d);
+                const isWeekend = dateObj.getDay() === 0 || dateObj.getDay() === 6;
+                const dateStr = d.toString().padStart(2, '0');
+                const weekDay = dateObj.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '');
+                
+                // Check Schedule
+                const isHO = DATA.schedule[dateKey] && DATA.schedule[dateKey].includes(emp.id);
+                
+                if (isHO) hoCount++; else epCount++;
+
+                scheduleList.push({
+                    day: dateStr,
+                    weekDay: weekDay.charAt(0).toUpperCase() + weekDay.slice(1),
+                    type: isHO ? 'HO' : 'EP',
+                    label: isHO ? 'Home Office' : 'Presencial',
+                    desc: isHO ? 'Trabalho Remoto' : 'Escritório Central',
+                    color: isHO ? 'text-slate-500' : 'text-indigo-600',
+                    bg: isHO ? 'bg-slate-100 text-slate-600' : 'bg-indigo-100 text-indigo-700',
+                    icon: isHO ? 'home' : 'briefcase'
+                });
+            });
+
+            // Render Header Stats
+            let html = \`
+                <div class="animate-enter" style="animation-delay: 0ms">
+                    <div class="bg-indigo-900 rounded-3xl p-6 shadow-2xl text-white relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-10 -mt-10 blur-2xl"></div>
+                        <h2 class="text-2xl font-bold mb-1">\${emp.name}</h2>
+                        <p class="text-indigo-300 text-xs font-bold uppercase tracking-widest mb-6">Resumo da Escala</p>
+                        <div class="flex gap-4">
+                            <div class="flex-1 bg-white/10 rounded-2xl p-3 backdrop-blur-md border border-white/10">
+                                <div class="text-3xl font-black">\${epCount}</div>
+                                <div class="text-[10px] uppercase font-bold text-indigo-200">Presencial</div>
+                            </div>
+                            <div class="flex-1 bg-white/5 rounded-2xl p-3 backdrop-blur-md border border-white/5">
+                                <div class="text-3xl font-black text-indigo-200">\${hoCount}</div>
+                                <div class="text-[10px] uppercase font-bold text-indigo-400">Home Office</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-3 pt-2">
+            \`;
+
+            // Render List
+            scheduleList.forEach((item, index) => {
+                html += \`
+                    <div class="animate-enter flex items-center p-4 bg-white border border-slate-100 rounded-2xl shadow-sm day-card \${item.type === 'HO' ? 'status-ho' : 'status-ep'}" style="animation-delay: \${(index * 30) + 100}ms">
+                        <div class="flex flex-col items-center justify-center w-12 h-12 bg-white border border-slate-100 rounded-xl shadow-sm mr-4 shrink-0">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase">\${item.weekDay}</span>
+                            <span class="text-lg font-black text-slate-800 leading-none">\${item.day}</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-sm text-slate-800 truncate">\${item.label}</h4>
+                            <p class="text-[11px] font-medium text-slate-400 truncate">\${item.desc}</p>
+                        </div>
+                        <div class="\${item.bg} px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2">
+                            <span>\${item.type}</span>
+                            <i data-lucide="\${item.icon}" class="w-3.5 h-3.5"></i>
+                        </div>
+                    </div>
+                \`;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function showMsg(icon, text, colorClass) {
+            const container = document.getElementById('resultsArea');
+            container.innerHTML = \`
+                <div class="flex flex-col items-center justify-center py-12 animate-enter bg-white rounded-3xl shadow-sm border border-slate-100 text-center p-6">
+                    <div class="p-4 bg-slate-50 rounded-full mb-4 \${colorClass}"><i data-lucide="\${icon}" class="w-8 h-8"></i></div>
+                    <p class="font-bold text-slate-600">\${text}</p>
+                </div>
+            \`;
+            lucide.createIcons();
+        }
+    <\/script>
+</body>
+</html>`;
             
             const blob = new Blob([portalHTML], {type:'text/html'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Portal_Matrix_${data.monthName}.html`; a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Portal_${data.monthName}.html`; a.click();
         }
 
         function toggleCell(key, id) { if(!schedule[key]) schedule[key] = []; const i = schedule[key].indexOf(id); if(i > -1) schedule[key].splice(i, 1); else schedule[key].push(id); saveData(); renderMatrix(); }
@@ -1038,60 +1286,115 @@
         function openVacationModal() { const s = document.getElementById('vacation-emp-select'); s.innerHTML = '<option value="">Selecione...</option>'; employees.forEach(e => s.innerHTML += `<option value="${e.id}">${e.name}</option>`); renderVacationList(); openModal('vacation-modal'); }
         function openHolidayModal() { renderHolidayList(); openModal('holiday-modal'); }
         function downloadTemplate() { const ws = XLSX.utils.json_to_sheet([{"Nome":"João Silva"},{"Nome":"Maria Souza"}]); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Modelo"); XLSX.writeFile(wb, "modelo_escala.xlsx"); }
-        function exportToExcel() { if(!isScheduleGenerated) return showToast("Gere a escala primeiro", "error"); const ws = XLSX.utils.json_to_sheet(employees.map(e => ({ "Colaborador": e.name }))); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Escala"); XLSX.writeFile(wb, "Escala.xlsx"); }
+        function exportToExcel() {
+            if(!isScheduleGenerated) return showToast("Gere a escala primeiro", "error");
+            
+            // Coletar dados da tabela
+            const table = document.querySelector('#matrix-container table');
+            if (!table) return showToast("Tabela não encontrada", "error");
+            
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.table_to_sheet(table);
+            
+            // Ajustar larguras das colunas
+            const colWidths = [];
+            const rows = ws['!ref'] ? XLSX.utils.decode_range(ws['!ref']) : {e: {c: 0, r: 0}};
+            
+            for (let c = 0; c <= rows.e.c; c++) {
+                let maxWidth = 10; // largura mínima
+                for (let r = 0; r <= rows.e.r; r++) {
+                    const cell = ws[XLSX.utils.encode_cell({c, r})];
+                    if (cell && cell.v) {
+                        const cellWidth = String(cell.v).length;
+                        if (cellWidth > maxWidth) maxWidth = cellWidth;
+                    }
+                }
+                colWidths.push({wch: Math.min(maxWidth, 20)}); // largura máxima de 20
+            }
+            ws['!cols'] = colWidths;
+            
+            XLSX.utils.book_append_sheet(wb, ws, "Escala");
+            XLSX.writeFile(wb, "Escala.xlsx");
+            showToast("Excel exportado com sucesso!");
+        }
         
         function addVacation() { const empId = document.getElementById('vacation-emp-select').value; const start = document.getElementById('vacation-start').value; const end = document.getElementById('vacation-end').value; if(!empId || !start || !end) return; if(!vacations[empId]) vacations[empId] = []; vacations[empId].push({start, end}); saveData(); renderVacationList(); }
         function renderVacationList() { const list = document.getElementById('vacation-list'); list.innerHTML = ''; Object.keys(vacations).forEach(id => { const emp = employees.find(e => e.id == id); if(!emp) return; vacations[id].forEach((v, i) => { list.innerHTML += `<div class="p-4 bg-white border border-slate-100 rounded-2xl mb-2 flex justify-between items-center text-xs shadow-sm"><div><span class="font-bold text-slate-700 block mb-1">${emp.name}</span><span class="text-slate-400">${v.start.split('-').reverse().join('/')} até ${v.end.split('-').reverse().join('/')}</span></div><button onclick="vacations[${id}].splice(${i},1); saveData(); renderVacationList();" class="text-rose-400 bg-rose-50 p-1.5 rounded-lg hover:bg-rose-100"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`; }); }); lucide.createIcons(); }
         function addHoliday() { const d = document.getElementById('holiday-date').value; const t = document.getElementById('holiday-type').value; if(!d) return; holidays[d] = t; saveData(); renderHolidayList(); }
         function renderHolidayList() { const list = document.getElementById('holiday-list'); list.innerHTML = ''; Object.keys(holidays).sort().forEach(d => { list.innerHTML += `<div class="p-4 bg-white border border-slate-100 rounded-2xl mb-2 flex justify-between items-center text-xs shadow-sm"><div><span class="font-bold text-slate-700 block mb-1">${d.split('-').reverse().join('/')}</span><span class="text-slate-400 uppercase font-bold text-[10px]">${holidays[d]}</span></div><button onclick="delete holidays['${d}']; saveData(); renderHolidayList();" class="text-rose-400 bg-rose-50 p-1.5 rounded-lg hover:bg-rose-100"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`; }); lucide.createIcons(); }
 
-        // === RELATÓRIO DE JUSTIFICATIVAS PARA IMPRESSÃO ===
-        function renderJustificationsForPrint() {
-            const container = document.getElementById('print-justifications');
-            const tbody = document.getElementById('print-justifications-body');
-            tbody.innerHTML = '';
+        // === RELATÓRIOS PARA IMPRESSÃO (JUSTIFICATIVAS E DETALHES) ===
+        function renderReportsForPrint() {
+            const justContainer = document.getElementById('print-justifications');
+            const detailsContainer = document.getElementById('print-day-details');
+
+            // --- REGRA DE NEGÓCIO: ESCALA x PRESENÇA ---
+            // Se estiver no modo 'schedule' (Escala), esses relatórios NÃO devem aparecer.
+            if (currentMode === 'schedule') {
+                justContainer.classList.add('hidden');
+                detailsContainer.classList.add('hidden');
+                return;
+            }
+
+            // Se estiver no modo 'attendance' (Presença), processamos os dados para exibição.
+            
+            // 1. Relatório de Justificativas
+            const justBody = document.getElementById('print-justifications-body');
+            justBody.innerHTML = '';
             
             let hasJustifications = false;
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-            // Ordena colaboradores por nome
             const sortedEmployees = [...employees].sort((a,b) => a.name.localeCompare(b.name));
 
-            // Itera dia por dia do mês atual
             for (let d = 1; d <= daysInMonth; d++) {
                 const dateKey = `${year}-${month}-${d}`;
-                
                 sortedEmployees.forEach(emp => {
                     const key = `${dateKey}-${emp.id}`;
                     const record = attendance[key];
-                    
                     if (record && record.status === 'J') {
                         hasJustifications = true;
                         const dateStr = `${d.toString().padStart(2,'0')}/${(month+1).toString().padStart(2,'0')}/${year}`;
-                        
-                        const row = `
-                            <tr class="border-b border-slate-200">
-                                <td class="p-2 text-xs">${dateStr}</td>
-                                <td class="p-2 text-xs font-bold">${emp.name}</td>
-                                <td class="p-2 text-xs italic text-slate-600">${record.obs || 'Sem observação'}</td>
-                            </tr>
-                        `;
-                        tbody.innerHTML += row;
+                        justBody.innerHTML += `<tr class="border-b border-slate-200"><td class="p-2 text-xs">${dateStr}</td><td class="p-2 text-xs font-bold">${emp.name}</td><td class="p-2 text-xs italic text-slate-600">${record.obs || 'Sem observação'}</td></tr>`;
                     }
                 });
             }
+            // Exibe apenas se houver dados, conforme prática padrão, mas permitido apenas no modo Presença
+            justContainer.classList.toggle('hidden', !hasJustifications);
 
-            if (hasJustifications) {
-                container.classList.remove('hidden');
-            } else {
-                container.classList.add('hidden');
+            // 2. Relatório de Detalhes do Dia (Professores)
+            const detailsBody = document.getElementById('print-day-details-body');
+            detailsBody.innerHTML = '';
+            
+            let hasDetails = false;
+            
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateKey = new Date(year, month, d).toISOString().split('T')[0];
+                const details = dayMetadata[dateKey];
+                
+                if (details && (details.professor || details.subject || details.start || details.end)) {
+                    hasDetails = true;
+                    const dateStr = `${d.toString().padStart(2,'0')}/${(month+1).toString().padStart(2,'0')}/${year}`;
+                    
+                    detailsBody.innerHTML += `
+                        <tr class="border-b border-slate-200">
+                            <td class="p-2 text-xs">${dateStr}</td>
+                            <td class="p-2 text-xs font-bold">${details.professor || '-'}</td>
+                            <td class="p-2 text-xs">${details.subject || '-'}</td>
+                            <td class="p-2 text-xs text-center">${details.start || '-'}</td>
+                            <td class="p-2 text-xs text-center">${details.end || '-'}</td>
+                        </tr>
+                    `;
+                }
             }
+            // Exibe apenas se houver dados
+            detailsContainer.classList.toggle('hidden', !hasDetails);
         }
 
         // Gancho para o evento de impressão
-        window.addEventListener('beforeprint', renderJustificationsForPrint);
+        window.addEventListener('beforeprint', renderReportsForPrint);
 
         document.addEventListener('DOMContentLoaded', () => { loadData(); updateMonthDisplay(); renderUI(); initTooltips(); });
     </script>
